@@ -176,18 +176,17 @@ final class Exifography_ACN {
 	}
 
 	public static function activate() {
-		$old     = get_option( 'thesography_options' );
 		$current = get_option( self::OPTION );
-		$options = self::defaults();
-		foreach ( array( $old, $current ) as $src ) {
-			if ( is_array( $src ) ) {
-				$options = array_merge( $options, $src );
-			}
+		if ( is_array( $current ) && $current ) {
+			return; // existing settings (also those of the original plugin) are kept exactly as they are
 		}
-		if ( ! empty( $old ) ) {
+		$old = get_option( 'thesography_options' );
+		if ( is_array( $old ) && $old ) {
+			update_option( self::OPTION, $old );
 			delete_option( 'thesography_options' );
+			return;
 		}
-		update_option( self::OPTION, $options );
+		update_option( self::OPTION, self::defaults() );
 	}
 
 	private function field_order() {
