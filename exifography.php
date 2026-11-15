@@ -289,8 +289,9 @@ final class Exifography_ACN {
 		}
 		if ( $s < 1 ) {
 			$inv = 1 / $s;
-			// keep one decimal for the classic non-integer speeds (1/1.3, 1/1.6, 1/2.5)
-			$val = ( $inv < 4 && abs( $inv - round( $inv ) ) > 0.05 ) ? number_format( $inv, 1, '.', '' ) : (string) round( $inv );
+			// one decimal only for the classic non-integer speeds (1/1.3, 1/1.5, 1/1.6, 1/2.5), as in the original plugin
+			$one = round( $inv, 1 );
+			$val = in_array( $one, array( 1.3, 1.5, 1.6, 2.5 ), true ) ? number_format( $one, 1, '.', '' ) : (string) round( $inv );
 			return '1/' . $val . 's';
 		}
 		return rtrim( rtrim( number_format( $s, 1, '.', '' ), '0' ), '.' ) . 's';
@@ -556,6 +557,11 @@ final class Exifography_ACN {
 		$exif = array();
 		foreach ( $this->format( $img_id, $fields ) as $key => $d ) {
 			$exif[ $key ] = $d['text'];
+		}
+		// the lightbox uses the site date format (translated per language), not the shortcode timestamp format
+		if ( isset( $exif['created_timestamp'] ) ) {
+			$m                         = $this->image_meta( $img_id );
+			$exif['created_timestamp'] = date_i18n( get_option( 'date_format' ), (int) $m['created_timestamp'] );
 		}
 		return $exif ? wp_json_encode( $exif ) : '';
 	}
