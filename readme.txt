@@ -54,7 +54,7 @@ See the above answer.
 = 1.4.0 (ACN fork) =
 * Runs as "Exifography (ACN)" in its own folder; `Update URI: false` so wp.org updates never overwrite it. Refuses to run while the original plugin is active.
 * One EXIF formatter for the shortcode, auto insert and the new FooGallery lightbox integration (data-exif + lightbox EXIF panel, fields and display mode in the settings).
-* Shortcode: `[exif show="camera,aperture,..." id="123" style="list|inline"]`; an explicit `show` list keeps its order.
+* Shortcode: `[exif show="camera,aperture,..." id="123" style="list|inline"]`; fields follow the saved display order.
 * Fixes: label HTML (`%s` placeholders all filled), shutter speed formatting, exposure bias, GPS without notices, Google Static Maps URL (https, no `sensor`).
 * PHP 8.4 safe, escaped output, nonce/capability checks, singleton (no duplicate hooks), textdomain loaded on `init`, admin CSS/JS only on the settings page, removed debug `print_r($_POST)`.
 

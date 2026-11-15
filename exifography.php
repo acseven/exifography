@@ -37,7 +37,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // The original wp.org plugin (class "exifography") must not run at the same time.
-if ( class_exists( 'exifography' ) || class_exists( 'Exifography_ACN' ) ) {
+// Note: do not test class_exists( 'Exifography_ACN' ) here: PHP declares the class below at compile time,
+// so it always exists already. A constant guards against this file being loaded twice.
+if ( class_exists( 'exifography', false ) || defined( 'EXIFOGRAPHY_ACN_FILE' ) ) {
 	add_action( 'admin_notices', function () {
 		if ( current_user_can( 'activate_plugins' ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Exifography (ACN) is not running: deactivate the original Exifography plugin first.', 'exifography' ) . '</p></div>';
@@ -45,6 +47,7 @@ if ( class_exists( 'exifography' ) || class_exists( 'Exifography_ACN' ) ) {
 	} );
 	return;
 }
+define( 'EXIFOGRAPHY_ACN_FILE', __FILE__ );
 
 final class Exifography_ACN {
 
@@ -462,13 +465,10 @@ final class Exifography_ACN {
 			return '';
 		}
 
-		$explicit = false;
 		if ( is_string( $display ) && '' !== trim( $display ) ) {
-			$explicit = 'all' !== trim( $display );
-			$fields   = $explicit ? array_map( 'trim', explode( ',', $display ) ) : array_keys( $this->fields );
+			$fields = 'all' === trim( $display ) ? array_keys( $this->fields ) : array_map( 'trim', explode( ',', $display ) );
 		} elseif ( is_array( $display ) && $display ) {
-			$explicit = true;
-			$fields   = $display;
+			$fields = $display;
 		} else {
 			$post_fields = $post_id ? get_post_meta( $post_id, '_use_exif', true ) : '';
 			if ( 'none' === $post_fields ) {
@@ -481,10 +481,8 @@ final class Exifography_ACN {
 		$fields = array_map( function ( $f ) use ( $legacy ) {
 			return $legacy[ $f ] ?? $f;
 		}, $fields );
-		// an explicit list keeps its own order, otherwise use the saved display order
-		if ( ! $explicit ) {
-			$fields = array_values( array_intersect( $this->field_order(), $fields ) );
-		}
+		// fields always follow the saved display order (drag & drop in the settings), as in the original plugin
+		$fields = array_values( array_intersect( $this->field_order(), $fields ) );
 		if ( ! $fields ) {
 			return '';
 		}
