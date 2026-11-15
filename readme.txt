@@ -1,10 +1,11 @@
-=== Plugin Name ===
-Contributors: kristarella
+=== Exifography (ACN) ===
+Contributors: kristarella, acseven
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7439094
 Tags: exif, iptc, photos, photographs, photoblog
-Requires at least: 3.2
-Tested up to: 4.9.1
-Stable tag: 1.3
+Requires at least: 6.0
+Requires PHP: 7.4
+Tested up to: 7.1
+Stable tag: 1.4.0
 
 Exifography displays EXIF data for images and enables import of latitude and longitude EXIF to the database.
 
@@ -49,6 +50,18 @@ See the above answer.
 2. Each post can have its own EXIF items displayed.
 
 == Changelog ==
+
+= 1.4.0 (ACN fork) =
+* Runs as "Exifography (ACN)" in its own folder; `Update URI: false` so wp.org updates never overwrite it. Refuses to run while the original plugin is active.
+* One EXIF formatter for the shortcode, auto insert and the new FooGallery lightbox integration (data-exif + lightbox EXIF panel, fields and display mode in the settings).
+* Shortcode: `[exif show="camera,aperture,..." id="123" style="list|inline"]`; fields follow the saved display order.
+* Fixes: label HTML (`%s` placeholders all filled), shutter speed formatting, exposure bias, GPS without notices, Google Static Maps URL (https, no `sensor`).
+* PHP 8.4 safe, escaped output, nonce/capability checks, singleton (no duplicate hooks), textdomain loaded on `init`, admin CSS/JS only on the settings page, removed debug `print_r($_POST)`.
+
+= 1.3.1 =
+* Added featured image as automatic exif source
+* Refactored `display_geo` so it can be used independently
+* Bug fixes
 
 = 1.3.1a =
 * Added finer EXIF label customisation selectors (ul.exif li label) (acseven)
